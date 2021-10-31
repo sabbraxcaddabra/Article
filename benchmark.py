@@ -1,15 +1,16 @@
 import time
 import matplotlib.pyplot as plt
 from statistics import mean, pstdev, median
+from tqdm import tqdm
 
 #TODO: Написать бенчмарк с возможностью сравнения скорости выполнения нескольких функций(для сравнения jit и non-jit версии расчета)
 
-def benchmark(iters = 1000, file_to_write = None, make_graphics = False):
+def benchmark(iters = 1000, file_to_write = None, show_graphics = False):
     """
     Функция возвращающая декоратор с параметрами, указанными выше
     :param iters: int Число итераций
     :param file_to_write: str Файл записи, по умолчанию None(печать в консоль)
-    :param make_graphics: bool Выводить/Не выводить график распределения (по умолчанию False - не выводить
+    :param show_graphics: bool Выводить/Не выводить график распределения (по умолчанию False - не выводить
     :return: Декоратор
     """
     def actual_decorator(func):
@@ -20,7 +21,7 @@ def benchmark(iters = 1000, file_to_write = None, make_graphics = False):
         """
         def wrapper(*args, **kwargs):
             time_list = []
-            for _ in range(iters):
+            for _ in tqdm(range(iters)):
                 start = time.perf_counter()
                 ret_val = func(*args, **kwargs)
                 end = time.perf_counter()
@@ -46,7 +47,7 @@ def benchmark(iters = 1000, file_to_write = None, make_graphics = False):
                     print(text, file=f)
             else:
                 print(text)
-            if make_graphics:
+            if show_graphics:
                 fig, ax = plt.subplots(figsize=(15, 10))
                 ax.hist(time_list[1:], bins=25)
                 ax.set(

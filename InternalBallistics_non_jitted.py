@@ -1,5 +1,4 @@
 import numpy as np
-from numba import njit
 from dataclasses import dataclass
 from benchmark import benchmark
 
@@ -94,7 +93,6 @@ class IntBalParams:
         params.append(tuple(powders))
         return tuple(params)
 
-@njit
 def P(y, Pv, lambda_khi, S, W0, qfi, omega_sum, psis, powders):
     """
 
@@ -125,7 +123,6 @@ def P(y, Pv, lambda_khi, S, W0, qfi, omega_sum, psis, powders):
 
     return p_mean, p_sn, p_kn
 
-@njit
 def theta(psis, powders):
     """
 
@@ -143,7 +140,6 @@ def theta(psis, powders):
     else:
         return 0.4
 
-@njit
 def psi(z, zk, kappa1, lambd1, mu1, kappa2, lambd2, mu2):
     """
 
@@ -166,7 +162,6 @@ def psi(z, zk, kappa1, lambd1, mu1, kappa2, lambd2, mu2):
     else:
         return 1
 
-@njit
 def int_bal_rs(y, P0, PV, k50, S, W0, l_k, l_ps, omega_sum, qfi, powders):
     """
 
@@ -203,7 +198,7 @@ def int_bal_rs(y, P0, PV, k50, S, W0, l_k, l_ps, omega_sum, qfi, powders):
             f[2+k] = (p_mean/powders[k][4]) * (y[2+k] < powders[k][7])
     return f, p_mean, p_sn, p_kn
 
-@njit
+#@benchmark(iters=1000)#, file_to_write="TimeMeasurments/1000_iters_jitted_intbal_calc_jitted.txt", make_graphics = False)
 def solve_ib(P0, PV, k50, S, W0, l_k, l_ps, omega_sum, qfi, l_d, powders, tmax = 1. , tstep = 1e-5):
     """
 

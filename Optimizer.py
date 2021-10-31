@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from numpy.random import uniform
-from InteriorBallistics import ArtSystem, Powder, Projectile, IntBalParams, solve_ib
+from InternalBallistics import ArtSystem, Powder, Projectile, IntBalParams, solve_ib
+from InternalBallistics_non_jitted import solve_ib as solve_ib_non_jitted
 from benchmark import benchmark
 
 # TODO: Оформить определение целевой функции, функции вывода и тд в отдельный файл
@@ -156,7 +157,7 @@ class RandomScanOptimizer(Optimizer):
         x = ai + bi*uniform(-1./i, 1./i, len(x))
         return x
 
-    #@benchmark(iters=200, file_to_write="opt_benc_200_jited.txt", make_graphics=True)
+    @benchmark(iters=100, file_to_write="TimeMeasurments/100_iters_intbal_optimization_jitted.txt")
     def optimize(self, N = 50, max_modifier = 8, min_delta_f = 0.):
         """
         Реализация алгоритма оптимизации
@@ -181,7 +182,8 @@ class RandomScanOptimizer(Optimizer):
                         if cur_f <= last_f and abs(cur_f - last_f) > min_delta_f:
                             last_f, last_x = cur_f, xx[:]
                             if self.out_func:
-                                self.out_func(xx, cur_f, cur_solution, self.params)
+                                pass
+                                #self.out_func(xx, cur_f, cur_solution, self.params)
                             bad_steps_cur = 0
                         else:
                             bad_steps_cur += 1
@@ -195,6 +197,7 @@ class RandomScanOptimizer(Optimizer):
             if bad_steps_cur == N and cur_step_modifier < max_modifier:
                 bad_steps_cur = 0
                 cur_step_modifier += 1
+        #print("Optimization complete successfully!")
         return last_x
 
 
